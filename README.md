@@ -1,2 +1,73 @@
 # Fleet-Telematics-Dashboards
-Power BI 2 Saas Dashboards - Cost, Safety &amp; Operations Dashboard 
+
+# Logistics Core Performance & Financial Optimization Analytics Platform
+
+[![Power BI](https://img.shields.io/badge/BI-Power%20BI-F2C811?style=flat&logo=powerbi&logoColor=black)](https://powerbi.microsoft.com/)
+[![Excel](https://img.shields.io/badge/Data-Excel%20%26%20Power%20Query-217346?style=flat&logo=microsoftexcel&logoColor=white)](https://microsoft.com/excel)
+[![DAX](https://img.shields.io/badge/Logic-DAX-blue?style=flat)](https://learn.microsoft.com/en-us/dax/)
+
+An enterprise-grade business intelligence solution that transforms raw, multi-tenant fleet telematics logs into high-impact operational insights and financial cost-control metrics. This repository showcases advanced relational data modeling, data quality assurance workflows, and vector-optimized DAX architecture designed to resolve supply chain constraints and eliminate operational waste.
+
+---
+
+## 🎬 Platform Demonstration & Visual Assets
+
+### 📱 Full Walkthrough
+<!-- PLACE YOUR SCREEN RECORDING HERE -->
+https://github.com/user-attachments/assets/b8a1efd6-99a3-488f-8c8a-7d83704222c4
+
+### 📊 Dashboard Page 1: Operations & SLA Fulfillment
+*Focuses on delivery pipeline health, fulfillment exceptions, and transit bottlenecks.*
+
+| Primary Interface Overview | Regional Congestion Mapping |
+| :---: | :---: |
+|<img width="1304" height="734" alt="image" src="https://github.com/user-attachments/assets/f7155b40-9018-4a5f-b312-62543c5a5569" /> | <img width="459" height="605" alt="image" src="https://github.com/user-attachments/assets/1fbffdc2-73da-4333-9a07-f804c5b69927" />
+| **Main Metrics & Alerts Breakdown** <br> Highlights 1K Total Trips, 461 Delays, and the 53.90% Compliance metric. | **Geographical Bottleneck Map Plotter** <br> Dynamic bubble sizing scaled by route delay count attributes. |
+
+### 💰 Dashboard Page 2: Cost & Safety Optimization
+*Focuses on behavior-driven fuel waste tracking, risk classification, and driver efficiency rankings[cite: 5].*
+
+| Primary Cost Interface | Fleet Asset Efficiency Profile |
+| :---: | :---: |
+| <img width="1306" height="732" alt="image" src="https://github.com/user-attachments/assets/72825cd2-fda3-49e1-9b07-12cac1cdc534" />
+| <img width="588" height="409" alt="image" src="https://github.com/user-attachments/assets/a272107e-515e-413f-81e1-9ecc71ebce20" />
+| **Driver Safety & Efficiency Ledger** <br> Tabular matrix tracking 30,451 total idle minutes with color-coded formatting[cite: 5]. | **Fuel Consumption Profiler** <br> Coordinate scatter plot isolating fuel usage against total distance[cite: 5]. |
+
+### 🚚 Fleet Vehicle Class Drill-Downs
+*Custom consumption slopes split dynamically by vehicle capacity constraints[cite: 5].*
+
+| Class 1: Delivery Vans | Class 2: Light Commercial Vehicles (LCVs) | Class 3: Heavy Trucks |
+| :---: | :---: | :---: |
+| <img src="./screenshots/vehicle_vans.png" width="100%" alt="Vans Visual"> | <img src="./screenshots/vehicle_lcvs.png" width="100%" alt="LCVs Visual"> | <img src="./screenshots/vehicle_trucks.png" width="100%" alt="Heavy Trucks Visual"> |
+| Baseline profile tracking high-efficiency urban delivery assets. | Cluster mapping medium-capacity freight distribution routing[cite: 5]. | Asset analysis profiling heavy multi-axle freight hauling. |
+
+---
+
+## 🧠 Data Architecture & Star Schema Design
+
+To guarantee instantaneous report filtering, cross-functional dashboard slicing, and scalable query processing speeds, the telemetry data was refactored into a relational **Star Schema Data Model**[cite: 5]:
+
+*   **Fact Table:** `Fact_Fleet_Telemetry` (Stores 1,000+ logged trip entries, actual runtime durations, exact fuel consumed, and alert mapping indexes)[cite: 5].
+*   **Dimension Tables:**
+    *   `Dim_Drivers`: Driver profile logs, unique employee keys, and baseline safety behaviors[cite: 5].
+    *   `Dim_Routes`: Route identifiers, source-to-destination coordinates, and scheduled target delivery windows (Scheduled TAT)[cite: 5].
+    *   `Dim_Vehicles`: Fleet asset parameters split into three categories (Vans, LCVs, Heavy Trucks)[cite: 5].
+
+---
+
+## 📐 Enterprise DAX Implementations (Core Formulas)
+
+Below are samples of the custom, vector-optimized DAX calculations engineered to generate the platform's core performance indicators[cite: 5]:
+
+### 1. Engine Idling Financial Penalty Cost Calculation
+*Calculates bottom-line fuel waste by applying commercial cost penalties when a driver exceeds the baseline 15-minute operational grace window[cite: 5].*
+```dax
+Idling_Penalty_Cost = 
+SUMX(
+    'Fact_Fleet_Telemetry',
+    IF(
+        'Fact_Fleet_Telemetry'[Idle_Time_Mins] > 15,
+        ('Fact_Fleet_Telemetry'[Idle_Time_Mins] - 15) * [Estimated_Fuel_Cost_Per_Min],
+        0
+    )
+)
