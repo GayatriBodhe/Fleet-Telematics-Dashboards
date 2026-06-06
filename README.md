@@ -53,6 +53,109 @@ To guarantee instantaneous report filtering, cross-functional dashboard slicing,
     *   `Dim_Vehicles`: Fleet asset parameters split into three categories (Vans, LCVs, Heavy Trucks)[cite: 5].
 
 ---
+## 📐 Core DAX Implementations (Metrics Engine)
 
-## 📐 Enterprise DAX Implementations (Core Formulas)
+The following formulas showcase the custom business logic and optimized vector-based DAX expressions engineered to build the data model's real-time analytical layer:
 
+### 1. Global Volume & Delivery SLA Tracking
+*Monitors fleet fulfillment rates and calculates deviations against contractually agreed turnaround times (Scheduled TAT).*
+
+```dax
+Total Trips = COUNTROWS('VTU_Logs')
+```
+```dax
+Delayed Trips Count = 
+SUMX(
+    'VTU_Logs',
+    IF('VTU_Logs'[Actual_Travel_Time_Hrs] > 'VTU_Logs'[Scheduled_TAT_Hrs], 1, 0)
+)
+```
+```dax
+SLA Compliance % = 
+DIVIDE(
+    [Total Trips] - [Delayed Trips Count],
+    [Total Trips],
+    0
+)
+```
+
+### 2. Operational Asset Anomaly & Safety Systems
+*Translates raw sensor telemetry patterns and geofencing violations into dynamic exception logs and behavioral safety ratings.*
+
+```dax
+Critical Alert Rate % = 
+DIVIDE(
+    CALCULATE(
+        [Total Trips], 
+        NOT(ISBLANK('VTU_Logs'[Alert_Type])) && 'VTU_Logs'[Alert_Type] <> "None"
+    ),
+    [Total Trips],
+    0
+)
+```
+```dax
+Driver Safety Score = 
+AVERAGEX(
+    'VTU_Logs',
+    MAX(
+        0,
+        100 - ('VTU_Logs'[Over_Speeding_Count] * 5) - IF('VTU_Logs'[Geofence_Breach] = "Yes", 10, 0)
+    )
+)
+```
+
+### 3. Fleet Financial Extractions & Resource Waste Metrics
+*Exposes financial bottom-line leakage by calculating fuel wastage costs and operational variance profiles against established corporate baselines.*
+```dax
+Fleet Fuel Efficiency (KM/L) = 
+DIVIDE(
+    SUM('VTU_Logs'[Distance_KM]),
+    SUM('VTU_Logs'[Fuel_Consumed_Liters]),
+    0
+)
+```
+```dax
+Fuel Efficiency Variance = 
+[Fleet Fuel Efficiency (KM/L)] - 5.5
+```
+```dax
+Fuel Wasted Idling (Liters) = 
+SUMX(
+    'VTU_Logs',
+    'VTU_Logs'[Idle_Time_Mins] * (2.0 / 60)
+)
+```
+```dax
+Idling Penalty Cost = 
+SUMX(
+    'VTU_Logs',
+    IF(
+        'VTU_Logs'[Idle_Time_Mins] > 15,
+        ('VTU_Logs'[Idle_Time_Mins] - 15) * 10,
+        0
+    )
+)
+```
+```dax
+Route Distance Variance % = 
+VAR AvgRouteDistance = 
+    CALCULATE(
+        AVERAGE('VTU_Logs'[Distance_KM]), 
+        ALLEXCEPT('VTU_Logs', 'VTU_Logs'[Route_ID])
+    )
+RETURN
+    DIVIDE(
+        SUM('VTU_Logs'[Distance_KM]) - ( [Total Trips] * AvgRouteDistance ),
+        [Total Trips] * AvgRouteDistance,
+        0
+    )
+```
+### 4. Dynamic Context & Filter Reporting
+*Enables automated visual context cards that intelligently adjust descriptive titles when slicing data fields across vehicle models.*
+```dax
+Selected Fleet Context = 
+SELECTEDVALUE(
+    'VTU_Logs'[Vehicle_Type], 
+    "All Commercial Vehicles"
+) & " Performance Profile"
+```
