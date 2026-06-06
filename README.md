@@ -24,13 +24,13 @@ https://github.com/user-attachments/assets/b8a1efd6-99a3-488f-8c8a-7d83704222c4
 |<img width="1304" height="734" alt="image" src="https://github.com/user-attachments/assets/f7155b40-9018-4a5f-b312-62543c5a5569" /> | <img width="459" height="605" alt="image" src="https://github.com/user-attachments/assets/1fbffdc2-73da-4333-9a07-f804c5b69927" />
 | **Main Metrics & Alerts Breakdown** <br> Highlights 1K Total Trips, 461 Delays, and the 53.90% Compliance metric. | **Geographical Bottleneck Map Plotter** <br> Dynamic bubble sizing scaled by route delay count attributes. |
 
+
 ### 💰 Dashboard Page 2: Cost & Safety Optimization
 *Focuses on behavior-driven fuel waste tracking, risk classification, and driver efficiency rankings[cite: 5].*
 
 | Primary Cost Interface | Fleet Asset Efficiency Profile |
 | :---: | :---: |
-| <img width="1306" height="732" alt="image" src="https://github.com/user-attachments/assets/72825cd2-fda3-49e1-9b07-12cac1cdc534" />
-| <img width="588" height="409" alt="image" src="https://github.com/user-attachments/assets/a272107e-515e-413f-81e1-9ecc71ebce20" />
+| <img width="806" height="432" alt="image" src="https://github.com/user-attachments/assets/72825cd2-fda3-49e1-9b07-12cac1cdc534" />|<img width="388" height="309" alt="image" src="https://github.com/user-attachments/assets/a272107e-515e-413f-81e1-9ecc71ebce20" /> |
 | **Driver Safety & Efficiency Ledger** <br> Tabular matrix tracking 30,451 total idle minutes with color-coded formatting[cite: 5]. | **Fuel Consumption Profiler** <br> Coordinate scatter plot isolating fuel usage against total distance[cite: 5]. |
 
 ### 🚚 Fleet Vehicle Class Drill-Downs
@@ -38,9 +38,8 @@ https://github.com/user-attachments/assets/b8a1efd6-99a3-488f-8c8a-7d83704222c4
 
 | Class 1: Delivery Vans | Class 2: Light Commercial Vehicles (LCVs) | Class 3: Heavy Trucks |
 | :---: | :---: | :---: |
-| <img src="./screenshots/vehicle_vans.png" width="100%" alt="Vans Visual"> | <img src="./screenshots/vehicle_lcvs.png" width="100%" alt="LCVs Visual"> | <img src="./screenshots/vehicle_trucks.png" width="100%" alt="Heavy Trucks Visual"> |
+| <img src="https://github.com/user-attachments/assets/30cce442-a64e-49e8-b0f6-c65074742e63" width="100%" alt="Delivery Vans Profile"> | <img src="https://github.com/user-attachments/assets/a1504f3d-c9b1-439e-ad82-7c634ffb6746" width="100%" alt="LCVs Cluster Mapping"> | <img src="https://github.com/user-attachments/assets/96e4cf88-40d0-4bed-8ed7-caa81e1e34e7" width="100%" alt="Heavy Trucks Analysis"> |
 | Baseline profile tracking high-efficiency urban delivery assets. | Cluster mapping medium-capacity freight distribution routing[cite: 5]. | Asset analysis profiling heavy multi-axle freight hauling. |
-
 ---
 
 ## 🧠 Data Architecture & Star Schema Design
@@ -57,17 +56,3 @@ To guarantee instantaneous report filtering, cross-functional dashboard slicing,
 
 ## 📐 Enterprise DAX Implementations (Core Formulas)
 
-Below are samples of the custom, vector-optimized DAX calculations engineered to generate the platform's core performance indicators[cite: 5]:
-
-### 1. Engine Idling Financial Penalty Cost Calculation
-*Calculates bottom-line fuel waste by applying commercial cost penalties when a driver exceeds the baseline 15-minute operational grace window[cite: 5].*
-```dax
-Idling_Penalty_Cost = 
-SUMX(
-    'Fact_Fleet_Telemetry',
-    IF(
-        'Fact_Fleet_Telemetry'[Idle_Time_Mins] > 15,
-        ('Fact_Fleet_Telemetry'[Idle_Time_Mins] - 15) * [Estimated_Fuel_Cost_Per_Min],
-        0
-    )
-)
